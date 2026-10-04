@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: arctos_description
+    relative_path: urdf/arctos_scene.urdf.xacro
+  srdf:
+    relative_path: config/arctos_scene.srdf
+  package_settings:
+    author_name: Alejandro Rodriguez del Bosque
+    author_email: rodr1674@purdue.edu
+    generated_timestamp: 1791154851
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity

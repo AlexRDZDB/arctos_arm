@@ -1,0 +1,11 @@
+# Default initial positions for arctos_scene's ros2_control fake system
+
+initial_positions:
+  jaw1: 0
+  jaw2: 0
+  joint1: 0
+  joint2: 0
+  joint3: 0
+  joint4: 0
+  joint5: 0
+  joint6: 0
