@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!--
+  Four-legged table. The ${name} frame is on the floor under the centre of the
+  table; ${name}_surface is the centre of the top face, for mounting things.
+-->
+<xacro:macro name="table" params="name parent length:=0.8 width:=1.5 height:=0.75 top_thickness:=0.04 leg_size:=0.05 mass:=20.0 *origin">
+  <xacro:property name="leg_height" value="${height - top_thickness}"/>
+  <xacro:property name="leg_x" value="${length / 2 - leg_size}"/>
+  <xacro:property name="leg_y" value="${width / 2 - leg_size}"/>
+
+  <xacro:macro name="table_leg" params="x y">
+    <visual>
+      <origin xyz="${x} ${y} ${leg_height / 2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${leg_size} ${leg_size} ${leg_height}"/>
+      </geometry>
+      <material name="table_legs"/>
+    </visual>
+    <collision>
+      <origin xyz="${x} ${y} ${leg_height / 2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${leg_size} ${leg_size} ${leg_height}"/>
+      </geometry>
+    </collision>
+  </xacro:macro>
+
+  <link name="${name}">
+    <inertial>
+      <origin xyz="0 0 ${height - top_thickness / 2}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia ixx="${mass * (width * width + top_thickness * top_thickness) / 12}"
+               iyy="${mass * (length * length + top_thickness * top_thickness) / 12}"
+               izz="${mass * (length * length + width * width) / 12}"
+               ixy="0" iyz="0" ixz="0"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 ${height - top_thickness / 2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${length} ${width} ${top_thickness}"/>
+      </geometry>
+      <material name="table_top"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${height - top_thickness / 2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${length} ${width} ${top_thickness}"/>
+      </geometry>
+    </collision>
+    <xacro:table_leg x="${leg_x}" y="${leg_y}"/>
+    <xacro:table_leg x="${leg_x}" y="${-leg_y}"/>
+    <xacro:table_leg x="${-leg_x}" y="${leg_y}"/>
+    <xacro:table_leg x="${-leg_x}" y="${-leg_y}"/>
+  </link>
+
+  <joint name="${name}_joint" type="fixed">
+    <xacro:insert_block name="origin"/>
+    <parent link="${parent}"/>
+    <child link="${name}"/>
+  </joint>
+
+  <link name="${name}_surface"/>
+
+  <joint name="${name}_surface_joint" type="fixed">
+    <origin xyz="0 0 ${height}" rpy="0 0 0"/>
+    <parent link="${name}"/>
+    <child link="${name}_surface"/>
+  </joint>
+</xacro:macro>
+
+</robot>

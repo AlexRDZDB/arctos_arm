@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!-- Gazebo (gz sim) plugins for the arm: joint state feedback and position hold -->
+
+<xacro:macro name="arctos_joint_position_controller" params="joint max_velocity">
+  <plugin filename="gz-sim-joint-position-controller-system" name="gz::sim::systems::JointPositionController">
+    <joint_name>${joint}</joint_name>
+    <topic>/arctos/${joint}/cmd_pos</topic>
+    <use_velocity_commands>true</use_velocity_commands>
+    <cmd_max>${max_velocity}</cmd_max>
+    <cmd_min>${-max_velocity}</cmd_min>
+  </plugin>
+</xacro:macro>
+
+<gazebo>
+  <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+    <topic>/joint_states</topic>
+    <joint_name>joint1</joint_name>
+    <joint_name>joint2</joint_name>
+    <joint_name>joint3</joint_name>
+    <joint_name>joint4</joint_name>
+    <joint_name>joint5</joint_name>
+    <joint_name>joint6</joint_name>
+    <joint_name>jaw1</joint_name>
+    <joint_name>jaw2</joint_name>
+  </plugin>
+
+  <xacro:arctos_joint_position_controller joint="joint1" max_velocity="1.0"/>
+  <xacro:arctos_joint_position_controller joint="joint2" max_velocity="1.0"/>
+  <xacro:arctos_joint_position_controller joint="joint3" max_velocity="1.0"/>
+  <xacro:arctos_joint_position_controller joint="joint4" max_velocity="1.0"/>
+  <xacro:arctos_joint_position_controller joint="joint5" max_velocity="1.0"/>
+  <xacro:arctos_joint_position_controller joint="joint6" max_velocity="1.0"/>
+  <xacro:arctos_joint_position_controller joint="jaw1" max_velocity="0.05"/>
+  <xacro:arctos_joint_position_controller joint="jaw2" max_velocity="0.05"/>
+</gazebo>
+
+</robot>

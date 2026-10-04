@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!--
+  AprilTag 36h11 id 0 printed on a flat sheet. The tag frame sits at the centre
+  of the sheet with Z pointing out of the printed face.
+  sheet_size is the full sheet edge, including the white border; the black
+  square that detectors measure is 0.8 * sheet_size.
+-->
+<xacro:macro name="apriltag" params="name parent sheet_size:=0.2 *origin">
+  <link name="${name}">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://arctos_description/meshes/apriltag_36h11_0.dae" scale="${sheet_size} ${sheet_size} 1"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="${name}_joint" type="fixed">
+    <xacro:insert_block name="origin"/>
+    <parent link="${parent}"/>
+    <child link="${name}"/>
+  </joint>
+</xacro:macro>
+
+</robot>
