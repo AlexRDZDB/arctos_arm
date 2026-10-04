@@ -65,6 +65,8 @@ def generate_launch_description():
         arguments=[
             '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
             '/joint_states@sensor_msgs/msg/JointState[gz.msgs.Model',
+            '/image/raw@sensor_msgs/msg/Image[gz.msgs.Image',
+            '/image/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
         ] + [
             f'/arctos/{joint}/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double'
             for joint in JOINTS

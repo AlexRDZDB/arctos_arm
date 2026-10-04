@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!--
+  Monocular camera. The ${name}_link frame sits at the lens with X pointing
+  along the view direction and Z up in the image. ${name}_optical_frame is the
+  same point in the ROS optical convention (Z forward, X right, Y down) and is
+  the frame_id stamped on the images.
+  Gazebo publishes the image on ${topic}; camera_info lands next to it
+  (e.g. /image/raw -> /image/camera_info).
+-->
+<xacro:macro name="camera" params="name parent topic:=/image/raw width:=640 height:=480 hfov:=1.047 rate:=30 *origin">
+  <xacro:property name="body_depth" value="0.02"/>
+  <xacro:property name="body_side" value="0.025"/>
+  <xacro:property name="body_mass" value="0.03"/>
+
+  <link name="${name}_link">
+    <inertial>
+      <origin xyz="${-body_depth / 2} 0 0" rpy="0 0 0"/>
+      <mass value="${body_mass}"/>
+      <inertia ixx="${body_mass * (body_side * body_side + body_side * body_side) / 12}"
+               iyy="${body_mass * (body_depth * body_depth + body_side * body_side) / 12}"
+               izz="${body_mass * (body_depth * body_depth + body_side * body_side) / 12}"
+               ixy="0" iyz="0" ixz="0"/>
+    </inertial>
+    <!-- Body sits behind the lens so it never shows up in its own image -->
+    <visual>
+      <origin xyz="${-body_depth / 2} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${body_depth} ${body_side} ${body_side}"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+  </link>
+
+  <joint name="${name}_joint" type="fixed">
+    <xacro:insert_block name="origin"/>
+    <parent link="${parent}"/>
+    <child link="${name}_link"/>
+  </joint>
+
+  <link name="${name}_optical_frame"/>
+
+  <joint name="${name}_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="${-pi / 2} 0 ${-pi / 2}"/>
+    <parent link="${name}_link"/>
+    <child link="${name}_optical_frame"/>
+  </joint>
+
+  <gazebo reference="${name}_link">
+    <sensor name="${name}" type="camera">
+      <topic>${topic}</topic>
+      <gz_frame_id>${name}_optical_frame</gz_frame_id>
+      <update_rate>${rate}</update_rate>
+      <always_on>true</always_on>
+      <camera>
+        <horizontal_fov>${hfov}</horizontal_fov>
+        <image>
+          <width>${width}</width>
+          <height>${height}</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.01</near>
+          <far>20</far>
+        </clip>
+      </camera>
+    </sensor>
+  </gazebo>
+</xacro:macro>
+
+</robot>

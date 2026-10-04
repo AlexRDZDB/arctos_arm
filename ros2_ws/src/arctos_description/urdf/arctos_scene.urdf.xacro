@@ -7,6 +7,7 @@
 <xacro:include filename="$(find arctos_description)/urdf/arctos_gazebo.xacro" />
 <xacro:include filename="$(find arctos_description)/urdf/table.urdf.xacro" />
 <xacro:include filename="$(find arctos_description)/urdf/apriltag.urdf.xacro" />
+<xacro:include filename="$(find arctos_description)/urdf/camera.urdf.xacro" />
 
 <!-- Arm base on the table surface. At the home pose the gripper points along -Y of base_link -->
 <xacro:property name="base_y_on_table" value="0.45"/>
@@ -30,5 +31,10 @@
 <xacro:apriltag name="apriltag" parent="base_link">
   <origin xyz="0 ${gripper_tip_y - tag_distance} 0.001" rpy="0 0 0"/>
 </xacro:apriltag>
+
+<!-- Eye-in-hand camera on the +X side of the gripper body, looking along the jaws (-Y of Gripper_1) -->
+<xacro:camera name="camera" parent="Gripper_1">
+  <origin xyz="0.051 -0.03 0" rpy="0 0 ${-pi / 2}"/>
+</xacro:camera>
 
 </robot>
