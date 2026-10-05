@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!--
+  ros2_control hardware for the arm inside Gazebo (gz sim), plus the Gazebo
+  plugin that hosts the controller_manager. Exposes the same interfaces as the
+  mock system in arctos_moveit_config (position command, position/velocity state).
+-->
+
+<xacro:macro name="arctos_gz_joint" params="name">
+  <joint name="${name}">
+    <command_interface name="position"/>
+    <state_interface name="position"/>
+    <state_interface name="velocity"/>
+  </joint>
+</xacro:macro>
+
+<xacro:macro name="arctos_gz_ros2_control" params="name controllers_file">
+  <ros2_control name="${name}" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    <xacro:arctos_gz_joint name="joint1"/>
+    <xacro:arctos_gz_joint name="joint2"/>
+    <xacro:arctos_gz_joint name="joint3"/>
+    <xacro:arctos_gz_joint name="joint4"/>
+    <xacro:arctos_gz_joint name="joint5"/>
+    <xacro:arctos_gz_joint name="joint6"/>
+    <xacro:arctos_gz_joint name="jaw1"/>
+    <xacro:arctos_gz_joint name="jaw2"/>
+  </ros2_control>
+
+  <gazebo>
+    <!-- Renders the camera sensors; the stock empty.sdf world does not load it -->
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>${controllers_file}</parameters>
+    </plugin>
+  </gazebo>
+</xacro:macro>
+
+</robot>

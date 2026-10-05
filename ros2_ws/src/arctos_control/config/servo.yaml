@@ -1,0 +1,55 @@
+# MoveIt Servo settings for the Arctos arm, loaded under the moveit_servo namespace
+
+publish_period: 0.02  # [s]
+max_expected_latency: 0.1  # [s]
+incoming_command_timeout: 0.2  # [s] the controller republishes the carrot at 50 Hz
+
+move_group_name: arctos_arm
+
+# Speed caps while chasing a pose target
+command_in_type: speed_units
+scale:
+  linear: 0.15  # [m/s]
+  rotational: 0.5  # [rad/s]
+  joint: 0.5
+
+pose_tracking:
+  linear_tolerance: 0.001  # [m]
+  angular_tolerance: 0.01  # [rad]
+
+# arctos_arm_controller is a JointTrajectoryController with position commands
+command_out_type: trajectory_msgs/JointTrajectory
+command_out_topic: /arctos_arm_controller/joint_trajectory
+publish_joint_positions: true
+publish_joint_velocities: false
+publish_joint_accelerations: false
+
+use_smoothing: true
+smoothing_filter_plugin_name: "online_signal_smoothing::ButterworthFilterPlugin"
+
+# move_group owns the planning scene; Servo just listens to it
+is_primary_planning_scene_monitor: false
+monitored_planning_scene_topic: /monitored_planning_scene
+check_octomap_collisions: false
+
+# Jacobian condition number limits. This arm is small, so it sits at 12-15 even
+# in comfortable poses (the home pose, with joint5 at 0, is above 1000)
+lower_singularity_threshold: 30.0  # start slowing down
+hard_stop_singularity_threshold: 60.0  # stop
+leaving_singularity_threshold_multiplier: 2.0
+joint_limit_margins: [0.1]
+
+joint_topic: /joint_states
+status_topic: ~/status
+pose_command_in_topic: ~/pose_target_cmds
+cartesian_command_in_topic: ~/delta_twist_cmds
+joint_command_in_topic: ~/delta_joint_cmds
+
+check_collisions: true
+collision_check_rate: 10.0  # [Hz]
+# Servo slows down in proportion to distance / threshold. Link_4_1 and
+# Gripper_1 are always about 0.8 mm apart and the SRDF does not disable that
+# pair, so the self-collision threshold has to stay below that or the arm crawls.
+# The table is part of the robot model, so this is also the margin to the table
+self_collision_proximity_threshold: 0.0005  # [m]
+scene_collision_proximity_threshold: 0.02  # [m]

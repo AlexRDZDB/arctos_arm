@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     ros-jazzy-joint-state-publisher-gui \
     ros-jazzy-moveit \
     ros-jazzy-moveit-py \
+    ros-jazzy-moveit-servo \
     ros-jazzy-ros2-control \
     ros-jazzy-ros2-controllers \
     ros-jazzy-gz-ros2-control \

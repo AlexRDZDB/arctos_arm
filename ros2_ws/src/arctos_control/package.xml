@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>arctos_control</name>
+  <version>0.1.0</version>
+  <description>
+    Pose tracking for the Arctos arm: plans and executes with MoveIt when the target is far, hands over to MoveIt Servo when it is close
+  </description>
+  <maintainer email="rodr1674@purdue.edu">Alejandro Rodriguez del Bosque</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <exec_depend>action_msgs</exec_depend>
+  <exec_depend>arctos_moveit_config</exec_depend>
+  <exec_depend>arctos_simulation</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>moveit_configs_utils</exec_depend>
+  <exec_depend>moveit_msgs</exec_depend>
+  <exec_depend>moveit_servo</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>shape_msgs</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <exec_depend>tf2_geometry_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

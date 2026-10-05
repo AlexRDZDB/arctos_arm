@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<robot name="arctos_scene" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!--
+  Same scene as arctos_description/urdf/arctos_scene.urdf.xacro (arm on a table,
+  AprilTag, eye-in-hand camera), but driven by ros2_control instead of the
+  per-joint gz position controllers of arctos_gazebo.xacro. The two would fight
+  over the joints, so the scene is rebuilt here without that file.
+  Keep the robot name, links and joints in sync with the scene: the SRDF in
+  arctos_moveit_config refers to them.
+-->
+
+<xacro:include filename="$(find arctos_description)/urdf/arctos_urdf.xacro" />
+<xacro:include filename="$(find arctos_description)/urdf/table.urdf.xacro" />
+<xacro:include filename="$(find arctos_description)/urdf/apriltag.urdf.xacro" />
+<xacro:include filename="$(find arctos_description)/urdf/camera.urdf.xacro" />
+<xacro:include filename="$(find arctos_simulation)/urdf/arctos_gz_ros2_control.xacro" />
+
+<!-- Controllers are the ones MoveIt is configured for -->
+<xacro:arg name="controllers_file" default="$(find arctos_moveit_config)/config/ros2_controllers.yaml"/>
+
+<!-- Arm base on the table surface. At the home pose the gripper points along -Y of base_link -->
+<xacro:property name="base_y_on_table" value="0.45"/>
+<!-- Y of the jaw tips in the base_link frame at the home pose (all joints at 0) -->
+<xacro:property name="gripper_tip_y" value="-0.3975"/>
+<xacro:property name="tag_distance" value="0.5"/>
+
+<link name="world"/>
+
+<xacro:table name="table" parent="world">
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+</xacro:table>
+
+<joint name="table_to_base" type="fixed">
+  <origin xyz="0 ${base_y_on_table} 0" rpy="0 0 0"/>
+  <parent link="table_surface"/>
+  <child link="base_link"/>
+</joint>
+
+<!-- 1 mm above the table top so the sheet does not z-fight with it -->
+<xacro:apriltag name="apriltag" parent="base_link">
+  <origin xyz="0 ${gripper_tip_y - tag_distance} 0.001" rpy="0 0 0"/>
+</xacro:apriltag>
+
+<!-- Eye-in-hand camera on the +X side of the gripper body, looking along the jaws (-Y of Gripper_1) -->
+<xacro:camera name="camera" parent="Gripper_1">
+  <origin xyz="0.051 -0.03 0" rpy="0 0 ${-pi / 2}"/>
+</xacro:camera>
+
+<xacro:arctos_gz_ros2_control name="GazeboSystem" controllers_file="$(arg controllers_file)"/>
+
+</robot>
