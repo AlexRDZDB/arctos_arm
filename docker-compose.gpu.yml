@@ -29,6 +29,3 @@ services:
       - /dev/dri:/dev/dri
     command: bash
     init: true
-
-docker-compose.yml
-1 KB
