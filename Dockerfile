@@ -7,6 +7,10 @@ WORKDIR /workspace
 
 RUN apt-get update && apt-get install -y \
     terminator \
+    gir1.2-aravis-0.8 \
+    python3-gi \
+    python3-opencv \
+    ros-jazzy-cv-bridge \
     ros-jazzy-joint-state-publisher \
     ros-jazzy-joint-state-publisher-gui \
     ros-jazzy-moveit \
@@ -16,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     ros-jazzy-ros2-controllers \
     ros-jazzy-gz-ros2-control \
     sudo \
+    usbutils \
     && rm -rf /var/lib/apt/lists/*
 
 # Run as a user matching the host's UID/GID so files created in the mounted

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>arctos_sensors</name>
+  <version>0.1.0</version>
+  <description>
+    Sensor drivers for the Arctos arm: publishes the frames of a USB or GigE Vision camera
+  </description>
+  <maintainer email="rodr1674@purdue.edu">Alejandro Rodriguez del Bosque</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>python3-gi</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
