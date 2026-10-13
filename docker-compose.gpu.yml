@@ -1,0 +1,34 @@
+services:
+  arctos_arm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    image: arctos-ros:jazzy
+    container_name: arctos-ros
+    privileged: true
+    network_mode: host
+    tty: true
+    stdin_open: true
+    working_dir: /workspace/ros2_ws
+    group_add:
+      - video
+    volumes:
+      - ./ros2_ws:/workspace/ros2_ws
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ${XAUTH:-/tmp/.docker.xauth}:${XAUTH:-/tmp/.docker.xauth}
+    environment:
+      ROS_DISTRO: jazzy
+      DISPLAY: ${DISPLAY:-:0}
+      QT_X11_NO_MITSHM: "1"
+      XAUTHORITY: ${XAUTH:-/tmp/.docker.xauth}
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+      - /dev/dri:/dev/dri
+    command: bash
+    init: true
+
+docker-compose.yml
+1 KB
