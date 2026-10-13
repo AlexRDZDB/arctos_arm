@@ -1,0 +1,61 @@
+# Windows 11 + Docker Desktop (WSL2 backend) variant of docker-compose.yml
+# Usage: docker compose -f docker-compose.win.yml up -d --build
+#
+# GUI apps (RViz, Gazebo, terminator) are displayed through WSLg, which ships
+# with Windows 11, so no X server (VcXsrv/Xming) or xauth setup is needed.
+services:
+  arctos_arm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # WSLg's sockets are owned by UID/GID 1000, so keep the default
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    image: arctos-ros:jazzy
+    container_name: arctos-ros
+    privileged: true
+    # On Docker Desktop "host" is the WSL2 VM, not Windows itself. To reach
+    # ROS nodes from Windows, enable Settings > Resources > Network >
+    # "Enable host networking" (Docker Desktop 4.34+).
+    network_mode: host
+    tty: true
+    stdin_open: true
+    working_dir: /workspace/ros2_ws
+    group_add:
+      - video
+    volumes:
+      - ./ros2_ws:/workspace/ros2_ws
+      # WSLg X11 socket and runtime dir (Wayland, PulseAudio), as exposed
+      # inside the Docker Desktop VM
+      - /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix
+      - /run/desktop/mnt/host/wslg:/mnt/wslg
+    environment:
+      ROS_DISTRO: jazzy
+      DISPLAY: ":0"
+      WAYLAND_DISPLAY: wayland-0
+      XDG_RUNTIME_DIR: /mnt/wslg/runtime-dir
+      PULSE_SERVER: /mnt/wslg/PulseServer
+      QT_X11_NO_MITSHM: "1"
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: all
+      # OpenGL in WSL2 goes through Mesa's D3D12 driver; pick the NVIDIA GPU
+      # instead of the integrated one
+      MESA_D3D12_DEFAULT_ADAPTER_NAME: NVIDIA
+    # No /dev/dri or /dev/bus/usb passthrough: those nodes don't exist in the
+    # Docker Desktop VM. The GPU is exposed via the reservation below
+    # (/dev/dxg). For USB devices (e.g. the arm's CAN adapter), attach them to
+    # WSL with usbipd-win first (`usbipd attach --wsl --busid <id>`), then
+    # restart the container; privileged mode makes them visible.
+    #
+    # `runtime: nvidia` is also dropped: Docker Desktop has no such runtime
+    # registered and handles NVIDIA GPUs through the device reservation.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
+    command: bash
+    init: true
